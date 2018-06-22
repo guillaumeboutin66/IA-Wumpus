@@ -15,9 +15,14 @@ public class GameManager {
     private Cell[][] map;
     private Point agentPosition;
     
+    
     public GameManager(int width, int height){
         agentPosition = new Point(0, height);
         initMap(width, height);
+    }
+    
+    public Boolean agentIsDead(){
+        return map[agentPosition.x][agentPosition.y].isDangerous();
     }
     
     private void initMap(int width, int height){
@@ -25,8 +30,27 @@ public class GameManager {
     }
     
     public Cell[] computeNewPosition(Action action){
+        switch(action){
+            case up:
+                agentPosition = new Point(agentPosition.x, agentPosition.y - 1);
+                break;
+            case right:
+                agentPosition = new Point(agentPosition.x + 1, agentPosition.y);
+                break;
+            case bottom:
+                agentPosition = new Point(agentPosition.x, agentPosition.y + 1);
+                break;
+            case left:
+                agentPosition = new Point(agentPosition.x - 1, agentPosition.y);
+                break;
+        }
         
-        /* faire déplacer et retourner les 4 cells */
-        return new Cell[3];
+        Cell[] cells = new Cell[3];
+        cells[0] = map[agentPosition.x][agentPosition.y - 1];//up
+        cells[1] = map[agentPosition.x + 1][agentPosition.y];//right
+        cells[2] = map[agentPosition.x][agentPosition.y + 1];//bottom
+        cells[3] = map[agentPosition.x - 1][agentPosition.y];//left
+        
+        return cells;
     }
 }

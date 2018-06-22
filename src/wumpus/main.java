@@ -19,9 +19,12 @@ public class main {
         while(!end){
            Action action = agent.takeDecision();
            if(action == Action.takeGold){
-               end = true;
+               end = true;//gold is taken
            }else{
                Cell[] newNeighbors = gameManager.computeNewPosition(action);
+               if(gameManager.agentIsDead()){
+                   end = true;//agent is dead
+               }
                agent.discoverPosition(newNeighbors);
            }
         }
