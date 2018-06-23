@@ -48,7 +48,8 @@ public class Cell {
         pit,
         smell,
         wind,
-        agent
+        agent,
+        wall
     }
     
     @Override

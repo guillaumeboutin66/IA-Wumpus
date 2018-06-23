@@ -13,7 +13,7 @@ public class main {
 
     public static void main(String[] args) {
         Boolean end = false;
-        GameManager gameManager = new GameManager(10,10);
+        GameManager gameManager = new GameManager(10,10,20);
         Agent agent = new Agent();
         
         while(!end){
