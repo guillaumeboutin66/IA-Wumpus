@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1300.0" style="-fx-background-color:#5d5d8f;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <AnchorPane fx:id="reality" layoutX="0.0" layoutY="300.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color : #ffffff;" />
+    <AnchorPane layoutX="700.0" layoutY="300.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color : #353555;" />
+    <Label layoutX="268.0" layoutY="276.0" text="REALITY" textFill="WHITE">
+      <font>
+        <Font size="18.0" fx:id="x1" />
+      </font>
+    </Label>
+    <Label font="$x1" layoutX="944.0" layoutY="276.0" text="EXPECTATION" textFill="WHITE" />
+    <Label layoutX="589.0" layoutY="14.0" text="GAME IS ON" textFill="#ba99ff">
+      <font>
+        <Font name="AR DARLING" size="20.0" />
+      </font>
+    </Label>
+    <RadioButton layoutX="14.0" layoutY="21.0" mnemonicParsing="false" selected="true" text="Auto" textFill="WHITE">
+      <toggleGroup>
+        <ToggleGroup fx:id="mode" />
+      </toggleGroup>
+    </RadioButton>
+    <RadioButton layoutX="92.0" layoutY="21.0" mnemonicParsing="false" text="Manuel" textFill="WHITE" toggleGroup="$mode" />
+    <Button layoutX="615.0" layoutY="182.0" mnemonicParsing="false" onAction="#startLaFete" text="Button" visible="false" />
+  </children>
+</AnchorPane>

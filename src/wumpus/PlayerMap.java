@@ -7,10 +7,10 @@ public class PlayerMap {
     int length;
     int width;
 
-    public void PlayerMap(int largeur, int hauteur){
+    public void PlayerMap(int largeur, int hauteur,double sizeX,double sizeY){
         for(int j =0;j<hauteur+1;j++) {
             for (int i = 0; i < largeur + 1; i++) {
-                cells.get(j).add(new Cell(j,i));
+                cells.get(j).add(new Cell(j,i,sizeX,sizeY));
             }
         }
         this.length=hauteur+1;

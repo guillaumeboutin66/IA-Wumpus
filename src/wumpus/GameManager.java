@@ -5,6 +5,9 @@
  */
 package wumpus;
 
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -21,17 +24,16 @@ public class GameManager {
     int usableWidth;
     
     
-    public GameManager(int width, int height,double wellRate){
+    public GameManager(int width, int height,double sizeX,double sizeY,double wellRate){
         mapWidth = width+2;
         mapHeight = height+2;
         usableHeight = height;
         usableWidth = width;
-        initMap(mapWidth, mapHeight,wellRate);
+        initMap(mapWidth, mapHeight,sizeX,sizeY,wellRate);
         System.out.println("Width = " + mapWidth);
         System.out.println("height = " + mapHeight);
         System.out.println("usableW = " + usableWidth);
         System.out.println("usableH= " + usableHeight);
-        display();
     }
     
     public Boolean agentIsDead(){
@@ -63,7 +65,7 @@ public class GameManager {
         return cells;
     }
 
-    public void initMap(int width, int height,double wellRate) {
+    public void initMap(int width, int height,double sizeX,double sizeY,double wellRate) {
 
         ArrayList<Point> lockedPoints = new ArrayList<>();
         ArrayList<Point> dangerousPoints = new ArrayList<>();
@@ -75,7 +77,7 @@ public class GameManager {
         for(int i = 0; i < width; i++){
             for(int j = 0; j < height; j++) {
                 if(map[i][j] == null){
-                    map[i][j] = new Cell(i,j);
+                    map[i][j] = new Cell(i,j,sizeX,sizeY);
                 }
             }
         }
@@ -83,24 +85,9 @@ public class GameManager {
         //Fill the borders
         for(int i = 0;i < width;i++){
             for(int j = 0; j< height;j++) {
-                if(i==0) {
+                if(i==0||i==width-1||j==0||j==height-1) {
                     map[i][j].addEvent(Cell.Event.wall);
-                    System.out.println(i+ " " + j);
-                    lockedPoints.add(new Point(i,j));
-                }
-                if(i==width-1){
-                    map[i][j].addEvent(Cell.Event.wall);
-                    System.out.println(i+ " " + j);
-                    lockedPoints.add(new Point(i,j));
-                }
-                if(j==0&&i!=0&&i!=width-1){
-                    map[i][j].addEvent(Cell.Event.wall);
-                    System.out.println(i+ " " + j);
-                    lockedPoints.add(new Point(i,j));
-                }
-                if(j==height-1&&i!=0&&i!=width-1){
-                    map[i][j].addEvent(Cell.Event.wall);
-                    System.out.println(i+ " " + j);
+                    map[i][j].setStyle("-fx-background-image:url(\"wumpus/resources/rock.png\");");
                     lockedPoints.add(new Point(i,j));
                 }
             }
@@ -109,26 +96,30 @@ public class GameManager {
         //Agent
         agentPosition = new Point(1, height-1);
         map[1][usableHeight].addEvent(Cell.Event.agent);
+        map[1][usableHeight].setStyle("-fx-background-image:url(\"wumpus/resources/player.png\")");
         lockedPoints.add(agentPosition);
 
         // Wumpus
         Point posWumpus = generatePoint(usableWidth, usableHeight, lockedPoints);
         map[posWumpus.x][posWumpus.y].addEvent(Cell.Event.wumpus);
+        map[posWumpus.x][posWumpus.y].setStyle("-fx-background-image:url(\"wumpus/resources/miniwumpus.png\")");
         lockedPoints.add(posWumpus);
         dangerousPoints.add(posWumpus);
 
         // Gold
         Point posGold = generatePoint(usableWidth, usableHeight, lockedPoints);
         map[posGold.x][posGold.y].addEvent(Cell.Event.gold);
+        map[posGold.x][posGold.y].setStyle("-fx-background-image:url(\"wumpus/resources/gold.png\")");
         lockedPoints.add(posGold);
 
         // Pit
         // RANDOM INT BETWEEN 1 & 20% of the number of map
-        int maxNumberOfPits = (int) Math.round(width*height*wellRate);
+        int maxNumberOfPits = (int) Math.round(usableWidth*usableHeight*wellRate);
         int randomNumberOfPits = generateRandom(maxNumberOfPits);
         for(int i = 0; i < randomNumberOfPits; i++){
             Point posPit = generatePoint(usableWidth, usableHeight, lockedPoints);
             map[posPit.x][posPit.y].addEvent(Cell.Event.pit);
+            map[posPit.x][posPit.y].setStyle("-fx-background-image:url(\"wumpus/resources/trou.png\")");
             lockedPoints.add(posPit);
             dangerousPoints.add(posPit);
         }
@@ -138,7 +129,7 @@ public class GameManager {
             for (int j = 0; j < height; j++) {
                 if (map[i][j].getEvents().contains(Cell.Event.wumpus)) {
                     addAdjacentEvent(map[i][j], Cell.Event.smell);
-                }
+            }
                 if (map[i][j].getEvents().contains(Cell.Event.pit)) {
                     addAdjacentEvent(map[i][j], Cell.Event.wind);
                 }
@@ -173,15 +164,31 @@ public class GameManager {
     private void addAdjacentEvent(Cell cell, Cell.Event event){
         if(cell.getPosition().x > 1 && checkIfSideEventExistOnCell(map[cell.getPosition().x-1][cell.getPosition().y], event)){
             map[cell.getPosition().x-1][cell.getPosition().y].addEvent(event);
+            addPictureAdjacent(map[cell.getPosition().x-1][cell.getPosition().y]);
         }
         if(cell.getPosition().y > 1 && checkIfSideEventExistOnCell(map[cell.getPosition().x][cell.getPosition().y-1], event)){
             map[cell.getPosition().x][cell.getPosition().y-1].addEvent(event);
+            addPictureAdjacent(map[cell.getPosition().x][cell.getPosition().y-1]);
         }
         if(cell.getPosition().x < mapWidth-2 && checkIfSideEventExistOnCell(map[cell.getPosition().x+1][cell.getPosition().y], event)){
             map[cell.getPosition().x+1][cell.getPosition().y].addEvent(event);
+            addPictureAdjacent(map[cell.getPosition().x+1][cell.getPosition().y]);
         }
         if(cell.getPosition().y < mapHeight-2 && checkIfSideEventExistOnCell(map[cell.getPosition().x][cell.getPosition().y+1], event)){
             map[cell.getPosition().x][cell.getPosition().y+1].addEvent(event);
+            addPictureAdjacent(map[cell.getPosition().x][cell.getPosition().y+1]);
+        }
+    }
+
+    private void addPictureAdjacent(Cell cell){
+        if(!(cell.getEvents().contains(Cell.Event.agent)||cell.getEvents().contains(Cell.Event.wumpus)||cell.getEvents().contains(Cell.Event.gold))) {
+            if (cell.getEvents().contains(Cell.Event.wind) && cell.getEvents().contains(Cell.Event.smell)) {
+                cell.setStyle("-fx-background-image:url(\"wumpus/resources/smellwind.png\")");
+            } else if (cell.getEvents().contains(Cell.Event.wind)) {
+                cell.setStyle("-fx-background-image:url(\"wumpus/resources/wind.png\")");
+            } else if (cell.getEvents().contains(Cell.Event.smell)) {
+                cell.setStyle("-fx-background-image:url(\"wumpus/resources/smell.png\")");
+            }
         }
     }
 
@@ -190,67 +197,8 @@ public class GameManager {
         return (!cell.getEvents().contains(event) && !cell.getEvents().contains(Cell.Event.pit));
     }
 
-    public void display(){
-
-        Cell[][] mycells = map;
-
-        for(int i = 0; i < mycells.length; i++) {
-            for (int j = 0; j < mycells[i].length; j++) {
-                String dangers = "";
-                for (Cell.Event event :mycells[j][i].getEvents()) {
-                    if (mycells[j][i].getEvents().contains(Cell.Event.agent)) {
-                        dangers = dangers + "A";
-                    }
-                    if (mycells[j][i].getEvents().contains(Cell.Event.gold)) {
-                        dangers = dangers + "G";
-                    }
-                    if (mycells[j][i].getEvents().contains(Cell.Event.wumpus)) {
-                        dangers = dangers + "W";
-                    }
-                    if (mycells[j][i].getEvents().contains(Cell.Event.smell)) {
-                        dangers = dangers + "S";
-                    }
-                    if (mycells[j][i].getEvents().contains(Cell.Event.pit)) {
-                        dangers = dangers + "P";
-                    }
-                    if (mycells[j][i].getEvents().contains(Cell.Event.wind)) {
-                        dangers = dangers + "I";
-                    }
-                    if(mycells[j][i].getEvents().contains(Cell.Event.wall)){
-                        dangers = dangers + "(#)";
-                    }
-                }
-                // Ajout du player
-                if(dangers.equals("")){
-                    dangers = "  ";
-                }else if(dangers.equals("A")){
-                    dangers = "A ";
-                }else if(dangers.equals("G")){
-                    dangers = "G ";
-                }else if(dangers.equals("I")){
-                    dangers = "I ";
-                }else if(dangers.equals("P")){
-                    dangers = "P ";
-                }else if(dangers.equals("S")){
-                    dangers = "S ";
-                }else if(dangers.equals("GIGI")){
-                    dangers = "GI";
-                }else if(dangers.equals("SISI")){
-                    dangers = "SI";
-                }else if(dangers.equals("WIWI")){
-                    dangers = "WI";
-                }else if(dangers.equals("ASAS")){
-                    dangers = "AS";
-                }else if(dangers.equals("AIAI")){
-                    dangers = "AI";
-                }else if(dangers.equals("I(#)I(#)")){
-                    dangers = "I(#)";
-                }
-                System.out.print("|  "+dangers+"  ");
-
-            }
-            System.out.println("| \n");
-        }
+    public Cell[][] getMap(){
+        return this.map;
     }
-    
+
 }
