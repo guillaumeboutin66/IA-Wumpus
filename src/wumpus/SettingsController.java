@@ -9,7 +9,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class Controller2 {
+public class SettingsController {
     @FXML
     private TextField hauteur;
     @FXML
@@ -21,7 +21,7 @@ public class Controller2 {
 
     private Scene firstscene;
 
-    private GameScene gamescene ;
+    private GameSceneController gamescene ;
 
     public void setFirstScene(Scene scene) {
         firstscene = scene;
@@ -37,7 +37,7 @@ public class Controller2 {
 
     public void launchGame(Event event)throws Exception{
         try {
-            gamescene = new GameScene();
+            gamescene = new GameSceneController();
             Stage scene = (Stage) ((Node) event.getSource()).getScene().getWindow();
             gamescene.startGame(scene,Integer.parseInt(largeur.getText()),Integer.parseInt(hauteur.getText()),puits.getValue());
         }catch (java.lang.Exception e){

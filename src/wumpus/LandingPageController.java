@@ -11,19 +11,19 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class Controller {
+public class LandingPageController {
     @FXML
     private Button newgame;
 
     private Scene secondScene;
 
-    private Controller2 secondController;
+    private SettingsController secondController;
 
     public void setSecondScene(Scene scene) {
         secondScene = scene;
     }
 
-    public void setsecondController(Controller2 ontroller){
+    public void setsecondController(SettingsController ontroller){
         secondController = ontroller;
     }
 

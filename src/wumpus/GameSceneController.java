@@ -5,10 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class GameScene {
+public class GameSceneController {
 
     int x;
     int y;
@@ -22,7 +21,7 @@ public class GameScene {
     @FXML
     AnchorPane reality;
 
-    public GameScene(){
+    public GameSceneController(){
     }
 
     public void startLaFete() {

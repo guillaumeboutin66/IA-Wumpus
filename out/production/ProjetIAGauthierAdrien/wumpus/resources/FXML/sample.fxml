@@ -13,7 +13,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane alignment="CENTER" hgap="10.0" opacity="0.8" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wumpus.Controller">
+<GridPane alignment="CENTER" hgap="10.0" opacity="0.8" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wumpus.LandingPageController">
   <children>
     <AnchorPane fx:id="mainwindow" prefHeight="899.9999000000025" prefWidth="1200.0" style="-fx-background-color : #353555;">
       <children>
@@ -22,7 +22,7 @@
             <Image url="@../wumpus.png" />
           </image>
         </ImageView>
-        <Button fx:id="newgame" layoutX="531.0" layoutY="819.0" mnemonicParsing="false" onMouseClicked="#launchSettings" prefHeight="47.0" prefWidth="139.0" style="#record-sales {&#10;    -fx-padding: 8 15 15 15;&#10;    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;&#10;    -fx-background-radius: 8;&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);&#10;    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );&#10;    -fx-font-weight: bold;&#10;    -fx-font-size: 1.1em;&#10;}&#10;#record-sales:hover {&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);&#10;}&#10;#record-sales:pressed {&#10;    -fx-padding: 10 15 13 15;&#10;    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;&#10;}" text="NEW GAME" textFill="#e4e4e4" />
+        <Button fx:id="newgame" layoutX="531.0" layoutY="819.0" mnemonicParsing="false" onMouseClicked="#launchSettings" prefHeight="47.0" prefWidth="139.0" style="#record-sales {&#10;    -fx-padding: 8 15 15 15;&#10;    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;&#10;    -fx-background-radius: 8;&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);&#10;    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );&#10;    -fx-font-weight: bold;&#10;    -fx-font-size: 1.1em;&#10;}&#10;#record-sales:hover {&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);&#10;}&#10;#record-sales:pressed {&#10;    -fx-padding: 10 15 13 15;&#10;    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;&#10;}" text="NEW GAME" textFill="WHITE" />
         <Label layoutX="430.0" layoutY="91.0" prefHeight="67.0" prefWidth="341.0" text="THE HUNT IS ABOUT TO BEGIN...">
           <font>
             <Font name="AR CHRISTY" size="25.0" fx:id="x1" />

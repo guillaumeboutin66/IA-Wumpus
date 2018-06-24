@@ -36,13 +36,13 @@ public class main extends Application {
         Scene secondScene = new Scene(secondPane, 1200, 900);
 
         // injecting second scene into the controller of the first scene
-        Controller firstPaneController = firstPaneLoader.getController();
-        System.out.println(firstPaneController.toString());
-        firstPaneController.setSecondScene(secondScene);
-        firstPaneController.setsecondController(secondPageLoader.getController());
+        LandingPageController firstPaneLandingPageController = firstPaneLoader.getController();
+        System.out.println(firstPaneLandingPageController.toString());
+        firstPaneLandingPageController.setSecondScene(secondScene);
+        firstPaneLandingPageController.setsecondController(secondPageLoader.getController());
 
         // injecting first scene into the controller of the second scene
-        Controller2 secondPaneController = secondPageLoader.getController();
+        SettingsController secondPaneController = secondPageLoader.getController();
         System.out.println(secondPaneController.toString());
         secondPaneController.setFirstScene(firstScene);
 
