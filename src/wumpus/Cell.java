@@ -30,11 +30,12 @@ public class Cell extends StackPane{
     
     private ArrayList<Event> events = new ArrayList<>();   
     private Point position;
-    private double sizeX;
-    private double sizeY;
-    private Boolean dangerous;
+    public double sizeX;
+    public double sizeY;
+    private Boolean dangerous=false;
     private Rectangle border;
     private Text text = new Text();
+    private String originalSprite;
     
     
     public Cell(int x, int y,double sizeX,double sizeY){
@@ -52,11 +53,17 @@ public class Cell extends StackPane{
         setTranslateY(y * sizeY);
 
     }
+    public Cell(){}
+
     public Rectangle getBorderRectangle(){
         return this.border;
     }
     public ArrayList<Event> getEvents(){
         return events;
+    }
+
+    public void removeEvent(Event e){
+        events.remove(e);
     }
 
     public void addEvent(Event e){
@@ -69,7 +76,7 @@ public class Cell extends StackPane{
     public Boolean isDangerous(){
         return dangerous;
     }
-    
+
     public Point getPosition(){
         return position;
     }
@@ -81,9 +88,18 @@ public class Cell extends StackPane{
         smell,
         wind,
         agent,
-        wall
+        wall,
+        unkonwn
     }
-    
+
+    public void setOriginalStyle(){
+            this.setStyle(originalSprite);
+    }
+
+    public void setOriginalSprite(String s){
+        this.originalSprite = s;
+    }
+
     @Override
     public String toString(){
         return "["+this.position.x+", "+this.position.y+"]/"+ getEvents().toString();
