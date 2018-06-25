@@ -13,6 +13,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class GameSceneController {
 
     int x;
@@ -29,6 +33,8 @@ public class GameSceneController {
     Boolean pause = false;
     Boolean end = false;
     Action manualAction = Action.hiddle;
+    Action finalAction = Action.hiddle;
+
     @FXML
     Label gameover;
     @FXML
@@ -90,7 +96,6 @@ public class GameSceneController {
                             Thread.sleep(1000);
                         }else if(manuel.isSelected()){
                             action = manualAction;
-                            Thread.sleep(1000);
                         }
                         if (action == Action.takeGold) {
                             end = true;//gold is taken
@@ -103,8 +108,10 @@ public class GameSceneController {
                             }
                             if (gameManager.agentIsDead()) {
                                 end = true;//agent is dead
+                                finalAction = action;
                             }
                             agent.discoverPosition(newNeighbors);
+                            manualAction = Action.hiddle;
                         }
                     } catch (Exception e) {
                         //do something
@@ -152,4 +159,15 @@ public class GameSceneController {
         savebutton.setVisible(true);
     }
 
+    public void saveState() throws IOException{
+        String str = gameManager.getPlayerPath().get(gameManager.getPlayerPath().size()-2).toString();
+        String finaleAction = finalAction.toString();
+        BufferedWriter writer = new BufferedWriter(new FileWriter("D:/Documents/Cours/I4/ProjetIAGauthierAdrien/src/wumpus/training/train.txt", true));
+        writer.append(System.lineSeparator());
+        writer.append(str);
+        writer.append(" ");
+        writer.append(finaleAction);
+
+        writer.close();
+    }
 }

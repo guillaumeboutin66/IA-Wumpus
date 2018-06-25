@@ -22,6 +22,7 @@ public class GameManager {
     int mapHeight;
     int usableHeight;
     int usableWidth;
+    ArrayList<Cell> playerPath = new ArrayList<>();
     
     
     public GameManager(int width, int height,double sizeX,double sizeY,double wellRate){
@@ -80,6 +81,7 @@ public class GameManager {
             previousCell.removeEvent(Cell.Event.agent);
             currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player.png\");");
             previousCell.setOriginalStyle();
+            addToPath(currentCell);
         }else{
             System.out.println("hiddle state or hit wall , no changes");
         }
@@ -226,6 +228,14 @@ public class GameManager {
 
     public Cell[][] getMap(){
         return this.map;
+    }
+
+    public void addToPath(Cell cell){
+        this.playerPath.add(cell);
+    }
+
+    public ArrayList<Cell> getPlayerPath(){
+        return playerPath;
     }
 
 }

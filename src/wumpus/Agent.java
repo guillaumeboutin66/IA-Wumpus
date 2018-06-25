@@ -18,6 +18,7 @@ public class Agent {
 
     Point position;
     Cell[][] knowncells;
+    ArrayList<Cell> path = new ArrayList<>();
     public Agent(Cell startingCell,int width, int height, double sizeX, double sizeY){
         int mapWidth = width+2;
         int mapHeight = height+2;
