@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1300.0" style="-fx-background-color:#5d5d8f;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
     <AnchorPane fx:id="reality" layoutX="0.0" layoutY="300.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color : #ffffff;" />
     <AnchorPane fx:id="expectation" layoutX="700.0" layoutY="300.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color : #353555;" />
-    <Label layoutX="268.0" layoutY="276.0" text="REALITY" textFill="WHITE">
+    <Label id="reality" layoutX="268.0" layoutY="276.0" text="REALITY" textFill="WHITE">
       <font>
         <Font size="18.0" fx:id="x1" />
       </font>
@@ -18,12 +22,17 @@
         <Font name="AR DARLING" size="20.0" />
       </font>
     </Label>
-    <RadioButton layoutX="14.0" layoutY="21.0" mnemonicParsing="false" selected="true" text="Auto" textFill="WHITE">
+    <RadioButton id="" fx:id="auto" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" selected="true" text="Auto" textFill="WHITE">
       <toggleGroup>
         <ToggleGroup fx:id="mode" />
       </toggleGroup>
     </RadioButton>
-    <RadioButton layoutX="92.0" layoutY="21.0" mnemonicParsing="false" text="Manuel" textFill="WHITE" toggleGroup="$mode" />
-    <Button layoutX="615.0" layoutY="182.0" mnemonicParsing="false" onAction="#startLaFete" text="Button" visible="false" />
+    <RadioButton fx:id="manuel" layoutX="92.0" layoutY="21.0" mnemonicParsing="false" text="Manuel" textFill="WHITE" toggleGroup="$mode" />
+    <Label id="" fx:id="gameover" layoutX="557.0" layoutY="145.0" prefHeight="42.0" prefWidth="186.0" style="-fx-background-color:#5d5d8f;" text="GAME OVER" textAlignment="CENTER" textFill="#d86e3a" visible="false">
+      <font>
+        <Font name="AR DARLING" size="30.0" />
+      </font>
+    </Label>
+    <Button id="" fx:id="savebutton" layoutX="618.0" layoutY="210.0" mnemonicParsing="false" style="#record-sales {&#10;    -fx-padding: 8 15 15 15;&#10;    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;&#10;    -fx-background-radius: 8;&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);&#10;    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );&#10;    -fx-font-weight: bold;&#10;    -fx-font-size: 1.1em;&#10;&#9;-fx-text-fill:white;&#10;&#10;}&#10;#record-sales:hover {&#10;    -fx-background-color: &#10;        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),&#10;        #9d4024,&#10;        #d86e3a,&#10;        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);&#10;}&#10;#record-sales:pressed {&#10;    -fx-padding: 10 15 13 15;&#10;    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;&#10;}" text="Save" visible="false" />
   </children>
 </AnchorPane>

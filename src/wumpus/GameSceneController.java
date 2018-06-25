@@ -6,7 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -25,6 +28,11 @@ public class GameSceneController {
     private Stage window;
     Boolean pause = false;
     Boolean end = false;
+    Action manualAction = Action.hiddle;
+    @FXML
+    Label gameover;
+    @FXML
+    Button savebutton;
     @FXML
     AnchorPane reality;
     @FXML
@@ -49,6 +57,23 @@ public class GameSceneController {
         Scene scene =  new Scene(gamePane, 1300 ,900);
         window.setScene(scene);
         this.window=window;
+        scene.setOnKeyPressed(e -> {
+            switch (e.getCode()){
+                case Q:
+                    manualAction = Action.left;
+                    break;
+                case S:
+                    manualAction = Action.bottom;
+                    break;
+                case D:
+                    manualAction = Action.right;
+                    break;
+                case Z:
+                    manualAction = Action.up;
+                    break;
+            }
+            System.out.println(e.getCode().toString());
+        });
         window.show();
         initItems(x,y,pitRate);
         initMap();
@@ -56,28 +81,40 @@ public class GameSceneController {
         new AnimationTimer(){
             @Override
             public void handle(long currentNanoTime){
-                try {
-                    Action action = agent.takeDecision();
-                    if (action == Action.takeGold) {
-                        end = true;//gold is taken
-                    } else {
-                        Cell[] newNeighbors = gameManager.computeNewPosition(action);
-                        for (int i = 0; i < x + 2; i++) {
-                            for (int j = 0; j < y + 2; j++) {
-                                System.out.println(agent.knowncells[i][j]);
+                if(!end) {
+                    try {
+                        System.out.println(auto.isSelected() + " " + manuel.isSelected());
+                        Action action = Action.hiddle;
+                        if(auto.isSelected()) {
+                            action = agent.takeDecision();
+                            Thread.sleep(1000);
+                        }else if(manuel.isSelected()){
+                            action = manualAction;
+                            Thread.sleep(1000);
+                        }
+                        if (action == Action.takeGold) {
+                            end = true;//gold is taken
+                        } else {
+                            Cell[] newNeighbors = gameManager.computeNewPosition(action);
+                            for (int i = 0; i < x + 2; i++) {
+                                for (int j = 0; j < y + 2; j++) {
+                                    System.out.println(agent.knowncells[i][j]);
+                                }
                             }
+                            if (gameManager.agentIsDead()) {
+                                end = true;//agent is dead
+                            }
+                            agent.discoverPosition(newNeighbors);
                         }
-                        if (gameManager.agentIsDead()) {
-                            end = true;//agent is dead
-                        }
-                        agent.discoverPosition(newNeighbors);
-                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        //do something
                     }
-                }catch (Exception e){
-                    //do something
+                }else{
+                        gameOver();
                 }
             }
         }.start();
+
     }
 
     public void initItems(int x,int y, double pitRate){
@@ -107,6 +144,12 @@ public class GameSceneController {
                 expectation.getChildren().add(playerMap[x][y]);
             }
         }
+    }
+
+    public void gameOver(){
+        System.out.println("GAME OVER");
+        gameover.setVisible(true);
+        savebutton.setVisible(true);
     }
 
 }

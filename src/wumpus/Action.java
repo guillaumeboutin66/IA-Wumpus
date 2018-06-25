@@ -10,5 +10,5 @@ package wumpus;
  * @author azuron
  */
 public enum Action {
-    up, right, bottom, left, takeGold
+    up, right, bottom, left, takeGold, hiddle
 }

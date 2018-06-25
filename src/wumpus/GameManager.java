@@ -56,6 +56,8 @@ public class GameManager {
             case left:
                 agentPosition = new Point(agentPosition.x - 1, agentPosition.y);
                 break;
+            case hiddle:
+                agentPosition = new Point(agentPosition.x,agentPosition.y);
         }
 
         upadtePlayer(previousCell,map[agentPosition.x][agentPosition.y]);
@@ -73,10 +75,14 @@ public class GameManager {
 
     public void upadtePlayer(Cell previousCell,Cell currentCell){
 
-        currentCell.addEvent(Cell.Event.agent);
-        previousCell.removeEvent(Cell.Event.agent);
-        currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player.png\");");
-        previousCell.setOriginalStyle();
+        if(previousCell!=currentCell) {
+            currentCell.addEvent(Cell.Event.agent);
+            previousCell.removeEvent(Cell.Event.agent);
+            currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player.png\");");
+            previousCell.setOriginalStyle();
+        }else{
+            System.out.println("hiddle state or hit wall , no changes");
+        }
     }
 
     public void initMap(int width, int height,double sizeX,double sizeY,double wellRate) {
