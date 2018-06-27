@@ -2,8 +2,10 @@ package wumpus;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -35,6 +37,8 @@ public class GameSceneController {
     Action manualAction = Action.hiddle;
     Action finalAction = Action.hiddle;
 
+    private Scene settingsScene;
+
     @FXML
     Label gameover;
     @FXML
@@ -51,13 +55,10 @@ public class GameSceneController {
     public GameSceneController(){
     }
 
-    public void startLaFete() {
-        System.out.println(squareSizeX + " " + sqaureSizeY);
-    }
-
     // doesn't need to be called "start" any more...
-    public void startGame(Stage window,int x,int y,double pitRate) throws Exception {
+    public void startGame(Stage window,int x,int y,double pitRate,Scene settingsScene) throws Exception {
         FXMLLoader gamePaneLoader = new FXMLLoader(getClass().getResource("resources/FXML/game.fxml"));
+        this.settingsScene = settingsScene;
         gamePaneLoader.setController(this);
         Parent gamePane = gamePaneLoader.load();
         Scene scene =  new Scene(gamePane, 1300 ,900);
@@ -78,7 +79,6 @@ public class GameSceneController {
                     manualAction = Action.up;
                     break;
             }
-            System.out.println(e.getCode().toString());
         });
         window.show();
         initItems(x,y,pitRate);
@@ -89,7 +89,6 @@ public class GameSceneController {
             public void handle(long currentNanoTime){
                 if(!end) {
                     try {
-                        System.out.println(auto.isSelected() + " " + manuel.isSelected());
                         Action action = Action.hiddle;
                         if(auto.isSelected()) {
                             action = agent.takeDecision();
@@ -101,11 +100,6 @@ public class GameSceneController {
                             end = true;//gold is taken
                         } else {
                             Cell[] newNeighbors = gameManager.computeNewPosition(action);
-                            for (int i = 0; i < x + 2; i++) {
-                                for (int j = 0; j < y + 2; j++) {
-                                    System.out.println(agent.knowncells[i][j]);
-                                }
-                            }
                             if (gameManager.agentIsDead()) {
                                 end = true;//agent is dead
                                 finalAction = action;
@@ -154,7 +148,6 @@ public class GameSceneController {
     }
 
     public void gameOver(){
-        System.out.println("GAME OVER");
         gameover.setVisible(true);
         savebutton.setVisible(true);
     }
@@ -169,5 +162,10 @@ public class GameSceneController {
         writer.append(finaleAction);
 
         writer.close();
+    }
+
+    public void returnToSettings(Event event){
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(settingsScene);
     }
 }

@@ -22,6 +22,7 @@ public class GameManager {
     int mapHeight;
     int usableHeight;
     int usableWidth;
+    String orientation = "down";
     ArrayList<Cell> playerPath = new ArrayList<>();
     
     
@@ -31,10 +32,6 @@ public class GameManager {
         usableHeight = height;
         usableWidth = width;
         initMap(mapWidth, mapHeight,sizeX,sizeY,wellRate);
-        System.out.println("Width = " + mapWidth);
-        System.out.println("height = " + mapHeight);
-        System.out.println("usableW = " + usableWidth);
-        System.out.println("usableH= " + usableHeight);
     }
     
     public Boolean agentIsDead(){
@@ -42,29 +39,38 @@ public class GameManager {
     }
     
     public Cell[] computeNewPosition(Action action){
-        System.out.println("je fais une action" + agentPosition.x + " " + agentPosition.y);
         Cell previousCell = map[agentPosition.x][agentPosition.y];
+        Point nextPosition = new Point(0,0);
         switch(action){
             case up:
-                agentPosition = new Point(agentPosition.x, agentPosition.y - 1);
+                nextPosition = new Point(agentPosition.x, agentPosition.y - 1);
+                orientation="up";
                 break;
             case right:
-                agentPosition = new Point(agentPosition.x + 1, agentPosition.y);
+                nextPosition = new Point(agentPosition.x + 1, agentPosition.y);
+                orientation="right";
                 break;
             case bottom:
-                agentPosition = new Point(agentPosition.x, agentPosition.y + 1);
+                nextPosition = new Point(agentPosition.x, agentPosition.y + 1);
+                orientation="down";
                 break;
             case left:
-                agentPosition = new Point(agentPosition.x - 1, agentPosition.y);
+                nextPosition = new Point(agentPosition.x - 1, agentPosition.y);
+                orientation="left";
                 break;
             case hiddle:
-                agentPosition = new Point(agentPosition.x,agentPosition.y);
+                nextPosition = new Point(agentPosition.x,agentPosition.y);
         }
 
-        upadtePlayer(previousCell,map[agentPosition.x][agentPosition.y]);
+        if(!map[nextPosition.x][nextPosition.y].getEvents().contains(Cell.Event.wall)){
+            agentPosition = new Point(nextPosition.x,nextPosition.y);
+        }else{
+            map[nextPosition.x][nextPosition.y].setCollision(true);
+        }
+
+        upadtePlayer(previousCell,map[agentPosition.x][agentPosition.y],orientation);
         
         Cell[] cells = new Cell[5];
-        System.out.println("noubelle position : " + agentPosition.x + " " + agentPosition.y);
         cells[0] = map[agentPosition.x][agentPosition.y]; //nouvelle position
         cells[1] = map[agentPosition.x][agentPosition.y - 1];//up
         cells[2] = map[agentPosition.x + 1][agentPosition.y];//right
@@ -74,16 +80,16 @@ public class GameManager {
         return cells;
     }
 
-    public void upadtePlayer(Cell previousCell,Cell currentCell){
+    public void upadtePlayer(Cell previousCell,Cell currentCell,String s){
 
         if(previousCell!=currentCell) {
             currentCell.addEvent(Cell.Event.agent);
             previousCell.removeEvent(Cell.Event.agent);
-            currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player.png\");-fx-background-size: cover;");
+            currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player_" + s + ".png\");-fx-background-size: " + currentCell.sizeX + " " + currentCell.sizeY +";");
             previousCell.setOriginalStyle();
             addToPath(currentCell);
         }else{
-            System.out.println("hiddle state or hit wall , no changes");
+            currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player_" + s + ".png\");-fx-background-size: " + currentCell.sizeX + " " + currentCell.sizeY +";");
         }
     }
 
@@ -92,7 +98,6 @@ public class GameManager {
         ArrayList<Point> lockedPoints = new ArrayList<>();
         ArrayList<Point> dangerousPoints = new ArrayList<>();
         wellRate /= 100;
-        System.out.println(wellRate);
         map = new Cell[width][height];
 
         // Fill the rest of the Map of normal map
@@ -109,7 +114,7 @@ public class GameManager {
             for(int j = 0; j< height;j++) {
                 if(i==0||i==width-1||j==0||j==height-1) {
                     map[i][j].addEvent(Cell.Event.wall);
-                    map[i][j].setStyle("-fx-background-image:url(\"wumpus/resources/rock.png\");-fx-background-size: cover;");
+                    map[i][j].setStyle("-fx-background-image:url(\"wumpus/resources/rock.png\");-fx-background-size: " + map[i][j].sizeX + " " + map[i][j].sizeY +";");
                     lockedPoints.add(new Point(i,j));
                 }
             }
@@ -117,24 +122,23 @@ public class GameManager {
 
         //Agent
         agentPosition = new Point(1, usableHeight);
-        System.out.println("initialisation agent dans la map" + agentPosition.y);
         map[1][usableHeight].addEvent(Cell.Event.agent);
-        map[1][usableHeight].setStyle("-fx-background-image:url(\"wumpus/resources/player.png\");-fx-background-size: cover;");
+        map[1][usableHeight].setStyle("-fx-background-image:url(\"wumpus/resources/player_down.png\");-fx-background-size: " + map[1][usableHeight].sizeX + " " + map[1][usableHeight].sizeY +";");
         lockedPoints.add(agentPosition);
 
         // Wumpus
         Point posWumpus = generatePoint(usableWidth, usableHeight, lockedPoints);
         map[posWumpus.x][posWumpus.y].addEvent(Cell.Event.wumpus);
-        map[posWumpus.x][posWumpus.y].setStyle("-fx-background-image:url(\"wumpus/resources/miniwumpus.png\");-fx-background-size: cover;");
-        map[posWumpus.x][posWumpus.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/miniwumpus.png\");-fx-background-size: cover;");
+        map[posWumpus.x][posWumpus.y].setStyle("-fx-background-image:url(\"wumpus/resources/miniwumpus.png\");-fx-background-size: " + map[posWumpus.x][posWumpus.y].sizeX + " " + map[posWumpus.x][posWumpus.y].sizeY +";");
+        map[posWumpus.x][posWumpus.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/miniwumpus.png\");-fx-background-size: " + map[posWumpus.x][posWumpus.y].sizeX + " " + map[posWumpus.x][posWumpus.y].sizeY +";");
         lockedPoints.add(posWumpus);
         dangerousPoints.add(posWumpus);
 
         // Gold
         Point posGold = generatePoint(usableWidth, usableHeight, lockedPoints);
         map[posGold.x][posGold.y].addEvent(Cell.Event.gold);
-        map[posGold.x][posGold.y].setStyle("-fx-background-image:url(\"wumpus/resources/gold.png\");-fx-background-size: cover;");
-        map[posGold.x][posGold.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/gold.png\");-fx-background-size: cover;");
+        map[posGold.x][posGold.y].setStyle("-fx-background-image:url(\"wumpus/resources/gold.png\");-fx-background-size: " + map[posGold.x][posGold.y].sizeX + " " + map[posGold.x][posGold.y].sizeY +";");
+        map[posGold.x][posGold.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/gold.png\");-fx-background-size: " + map[posGold.x][posGold.y].sizeX + " " + map[posGold.x][posGold.y].sizeY +";");
         lockedPoints.add(posGold);
 
         // Pit
@@ -144,8 +148,8 @@ public class GameManager {
         for(int i = 0; i < randomNumberOfPits; i++){
             Point posPit = generatePoint(usableWidth, usableHeight, lockedPoints);
             map[posPit.x][posPit.y].addEvent(Cell.Event.pit);
-            map[posPit.x][posPit.y].setStyle("-fx-background-image:url(\"wumpus/resources/trou.png\");-fx-background-size: cover;");
-            map[posPit.x][posPit.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/trou.png\");-fx-background-size: cover;");
+            map[posPit.x][posPit.y].setStyle("-fx-background-image:url(\"wumpus/resources/trou.png\");-fx-background-size: " + map[posPit.x][posPit.y].sizeX + " " + map[posPit.x][posPit.y].sizeY +";");
+            map[posPit.x][posPit.y].setOriginalSprite("-fx-background-image:url(\"wumpus/resources/trou.png\");-fx-background-size: " + map[posPit.x][posPit.y].sizeX + " " + map[posPit.x][posPit.y].sizeY +";");
             lockedPoints.add(posPit);
             dangerousPoints.add(posPit);
         }
@@ -209,14 +213,14 @@ public class GameManager {
     private void addPictureAdjacent(Cell cell){
         if(!(cell.getEvents().contains(Cell.Event.agent)||cell.getEvents().contains(Cell.Event.wumpus)||cell.getEvents().contains(Cell.Event.gold))) {
             if (cell.getEvents().contains(Cell.Event.wind) && cell.getEvents().contains(Cell.Event.smell)) {
-                cell.setStyle("-fx-background-image:url(\"wumpus/resources/smellwind.png\");-fx-background-size: cover;");
-                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/smellwind.png\");-fx-background-size: cover;");
+                cell.setStyle("-fx-background-image:url(\"wumpus/resources/smellwind.png\");-fx-background-size: " + cell.sizeX + " " + cell.sizeY +";");
+                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/smellwind.png\");-fx-background-size: " + cell.sizeX + " " + cell.sizeY +";");
             } else if (cell.getEvents().contains(Cell.Event.wind)) {
                 cell.setStyle("-fx-background-image:url(\"wumpus/resources/wind.png\");-fx-background-size: cover;");
-                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/wind.png\");-fx-background-size: cover;");
+                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/wind.png\");-fx-background-size: " + cell.sizeX + " " + cell.sizeY +";");
             } else if (cell.getEvents().contains(Cell.Event.smell)) {
                 cell.setStyle("-fx-background-image:url(\"wumpus/resources/smell.png\");-fx-background-size: cover;");
-                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/smell.png\");-fx-background-size: cover;");
+                cell.setOriginalSprite("-fx-background-image:url(\"wumpus/resources/smell.png\");-fx-background-size: " + cell.sizeX + " " + cell.sizeY +";");
             }
         }
     }

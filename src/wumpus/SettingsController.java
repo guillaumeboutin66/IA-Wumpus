@@ -39,7 +39,7 @@ public class SettingsController {
         try {
             gamescene = new GameSceneController();
             Stage scene = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            gamescene.startGame(scene,Integer.parseInt(largeur.getText()),Integer.parseInt(hauteur.getText()),puits.getValue());
+            gamescene.startGame(scene,Integer.parseInt(largeur.getText()),Integer.parseInt(hauteur.getText()),puits.getValue(),wellrate.getScene());
         }catch (java.lang.Exception e){
             System.out.println(e.getMessage());
             throw e;

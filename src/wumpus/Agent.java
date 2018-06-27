@@ -6,6 +6,7 @@
 package wumpus;
 
 import javafx.scene.Parent;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -23,13 +24,8 @@ public class Agent {
         int mapWidth = width+2;
         int mapHeight = height+2;
         position = new Point(startingCell.getPosition().x,startingCell.getPosition().y);
-        System.out.println("starting postion : " + position);
         knowncells = new Cell[mapWidth][mapHeight];
-        knowncells[position.x][position.y] = new Cell(position.x,position.y,sizeX,sizeY);
-        for(Cell.Event e: startingCell.getEvents()){
-            knowncells[position.x][position.y].addEvent(e);
-        }
-        knowncells[position.x][position.y].setStyle("-fx-background-image:url(\"wumpus/resources/player.png\")");
+        knowncells[position.x][position.y] = new Cell(startingCell);
         fillPlayerMap(mapWidth,mapHeight,sizeX,sizeY);
     }
     
@@ -43,10 +39,25 @@ public class Agent {
 
     public void discoverPosition(Cell[] cells){
         Point newPosition = cells[0].getPosition();
-        this.position=newPosition;
-        knowncells[newPosition.x][newPosition.y] = new Cell(cells[0].getPosition().x,cells[0].getPosition().y,cells[0].sizeX,cells[0].sizeY);
-        for(Cell.Event e: cells[0].getEvents()){
-            knowncells[newPosition.x][newPosition.y].addEvent(e);
+        if(!this.position.equals(newPosition)) {
+            knowncells[newPosition.x][newPosition.y].getEvents().clear();
+            knowncells[newPosition.x][newPosition.y].getEvents().addAll(cells[0].getEvents());
+            knowncells[newPosition.x][newPosition.y].setOriginalSprite(cells[0].getOriginalSprite());
+            knowncells[newPosition.x][newPosition.y].setStyle(cells[0].getStyle());
+            knowncells[position.x][position.y].removeEvent(Cell.Event.agent);
+            knowncells[position.x][position.y].setOriginalStyle();
+            this.position = newPosition;
+            System.out.println(knowncells[position.x][position.y].toString()+ " " + knowncells[position.x][position.y].getStyle() + knowncells[position.x][position.y].getParent().toString());
+        }else{
+            knowncells[newPosition.x][newPosition.y].setStyle(cells[0].getStyle());
+            for(int i=1; i<cells.length;i++){
+             if(cells[i].isCollision()){
+                 knowncells[cells[i].getPosition().x][cells[i].getPosition().y].getEvents().clear();
+                 knowncells[cells[i].getPosition().x][cells[i].getPosition().y].getEvents().addAll(cells[i].getEvents());
+                 knowncells[cells[i].getPosition().x][cells[i].getPosition().y].setOriginalSprite(cells[i].getOriginalSprite());
+                 knowncells[cells[i].getPosition().x][cells[i].getPosition().y].setStyle(cells[i].getStyle());
+              }
+            }
         }
     }
     public void fillPlayerMap(int width,int height,double sizeCaseHorizontal, double sizeCaseVertical){
@@ -55,7 +66,7 @@ public class Agent {
                 if(knowncells[i][j] == null){
                     knowncells[i][j] = new Cell(i,j,sizeCaseHorizontal,sizeCaseVertical);
                     knowncells[i][j].addEvent(Cell.Event.unkonwn);
-                    knowncells[i][j].setStyle("-fx-background-image:url(\"wumpus/resources/question.png\")");
+                    knowncells[i][j].setStyle("-fx-background-image:url(\"wumpus/resources/question.png\");-fx-background-size: " + knowncells[i][j].sizeX + " " + knowncells[i][j].sizeY +";");
                 }
             }
         }

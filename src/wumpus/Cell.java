@@ -35,14 +35,29 @@ public class Cell extends StackPane{
     private Boolean dangerous=false;
     private Rectangle border;
     private Text text = new Text();
+
+    public boolean isCollision() {
+        return collision;
+    }
+
+    public void setCollision(boolean collision) {
+        this.collision = collision;
+    }
+
+    private boolean collision = false;
+
+    public String getOriginalSprite() {
+        return (originalSprite==null) ? "" : originalSprite;
+    }
+
     private String originalSprite;
     
     
     public Cell(int x, int y,double sizeX,double sizeY){
 
         position = new Point(x, y);
-        this.sizeX=sizeX;
-        this.sizeY=sizeY;
+        this.sizeX= new Double(sizeX);
+        this.sizeY=new Double(sizeY);
         this.border = new Rectangle(sizeX-2,sizeY-2);
         border.setStroke(Color.LIGHTGRAY);
         text.setFont(Font.font(18));
@@ -54,6 +69,26 @@ public class Cell extends StackPane{
 
     }
     public Cell(){}
+
+    public Cell(Cell cell){ // change with new pour éviter les ref
+        for(Event e : cell.getEvents()){
+            this.events.add(e);
+        }
+        this.position = new Point(cell.getPosition());
+        this.sizeX = new Double(cell.sizeX);
+        this.sizeY = new Double(cell.sizeY);
+        this.dangerous = new Boolean(cell.isDangerous());
+        this.originalSprite = new String(cell.getOriginalSprite());
+        this.setStyle(new String(cell.getStyle()));
+        this.border = new Rectangle(sizeX-2,sizeY-2);
+        border.setStroke(Color.LIGHTGRAY);
+        text.setFont(Font.font(18));
+        text.setVisible(true);
+        border.setFill(null);
+        getChildren().addAll(border, text);
+        setTranslateX(this.position.x * sizeX);
+        setTranslateY(this.position.y * sizeY);
+    }
 
     public Rectangle getBorderRectangle(){
         return this.border;
