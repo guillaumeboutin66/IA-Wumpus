@@ -1,2 +1,8 @@
 ***************************AGENT TRAINING***********************
 [7, 1]/[wind] bottom
+[1, 14]/[smell] up
+[1, 14]/[smell] up
+[1, 14]/[smell] up
+[1, 14]/[smell] up
+[1, 14]/[smell] up
+[1, 14]/[smell] up

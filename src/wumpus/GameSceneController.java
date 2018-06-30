@@ -1,6 +1,5 @@
 package wumpus;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -51,6 +49,8 @@ public class GameSceneController {
     RadioButton auto;
     @FXML
     RadioButton manuel;
+    @FXML
+    Label win;
 
     public GameSceneController(){
     }
@@ -103,6 +103,11 @@ public class GameSceneController {
                             if (gameManager.agentIsDead()) {
                                 end = true;//agent is dead
                                 finalAction = action;
+                            }else{
+                                if (gameManager.getMap()[agent.position.x][agent.position.y].getEvents().contains(Cell.Event.gold)) {
+                                    end = true;
+                                    win.setVisible(true);
+                                }
                             }
                             agent.discoverPosition(newNeighbors);
                             manualAction = Action.hiddle;
@@ -150,6 +155,10 @@ public class GameSceneController {
     public void gameOver(){
         gameover.setVisible(true);
         savebutton.setVisible(true);
+    }
+
+    public void userinput(){
+
     }
 
     public void saveState() throws IOException{
