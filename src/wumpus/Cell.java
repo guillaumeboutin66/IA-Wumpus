@@ -108,22 +108,31 @@ public class Cell extends StackPane{
         return events;
     }
 
-    public decisiontree.Cell getPrincipalEvent(){
+    public decisiontree.Cell getPrincipalEvent(Cell cell){
 
-        decisiontree.Cell event;
+        decisiontree.Cell event = decisiontree.Cell.Empty;
 
-        if(this.getEvents().size()==0){
+        if(cell.getEvents().size()==0){
             event = decisiontree.Cell.Empty;
-        }else if(this.getEvents().contains(Event.wind)){
-            event = decisiontree.Cell.Wind;
-        }else if(this.getEvents().contains(Event.smell)){
-            event = decisiontree.Cell.Smell;
-        }else if(this.getEvents().contains(Event.agent)){
-            event = decisiontree.Cell.Player;
+        }else if(cell.getEvents().size()==1){
+            if(cell.getEvents().contains(Event.wind)) {
+                event = decisiontree.Cell.Wind;
+            }else if(cell.getEvents().contains(Event.smell)){
+                    event = decisiontree.Cell.Smell;
+                }else if(cell.getEvents().contains(Event.agent)){
+                event = decisiontree.Cell.Player;
+                }
+        }else if(cell.getEvents().size()==2){
+            if(cell.getEvents().contains(Event.agent)&&cell.getEvents().contains(Event.wind)){
+                event = decisiontree.Cell.PlayerWind;
+            }else if(cell.getEvents().contains(Event.agent)&&cell.getEvents().contains(Event.smell)){
+                event = decisiontree.Cell.PlayerSmell;
+            }else if(cell.getEvents().contains(Event.wind)&&cell.getEvents().contains(Event.smell)){
+                event = decisiontree.Cell.WindSmell;
+            }
         }else{
-            event = decisiontree.Cell.Unknown;
+            event = decisiontree.Cell.PlayerWindSmell;
         }
-
         return event;
     }
 

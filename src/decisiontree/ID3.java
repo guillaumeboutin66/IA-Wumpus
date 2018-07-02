@@ -18,7 +18,7 @@ public class ID3 {
     // table des faits
     public Line[] totalFacts;
     public Tree tree;
-    public Cell[] cellAvailable = {Cell.Empty, Cell.Player, Cell.Smell, Cell.Unknown, Cell.Wind,Cell.Unreachable};
+    public Cell[] cellAvailable = {Cell.Empty, Cell.Player, Cell.Smell, Cell.Unknown, Cell.Wind,Cell.Unreachable,Cell.PlayerSmell, Cell.PlayerWind, Cell.PlayerWindSmell, Cell.WindSmell};
     public String[] propertyAvailable = {"up", "right", "bottom", "left"};
 
     public ID3(Line[] totalFacts){

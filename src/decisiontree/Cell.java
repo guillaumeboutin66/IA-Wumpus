@@ -10,5 +10,5 @@ package decisiontree;
  * @author azuron
  */
 public enum Cell {
-    Empty, Wind, Smell, Unknown, Player, Unreachable
+    Empty, Wind, Smell, Unknown, Player, Unreachable, PlayerSmell, PlayerWind, WindSmell, PlayerWindSmell,
 }

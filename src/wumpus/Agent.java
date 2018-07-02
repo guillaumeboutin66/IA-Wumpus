@@ -26,9 +26,9 @@ public class Agent {
 
     Point position;
     Cell[][] knowncells;
-    ArrayList<Cell> path = new ArrayList<>();
     ID3 decision;
     FutureCellDecision lastDecision;
+    ArrayList<FutureCellDecision> aroundCells = new ArrayList<>();
 
 
     public Agent(Cell startingCell,int width, int height, double sizeX, double sizeY){
@@ -45,8 +45,8 @@ public class Agent {
 
         Action action = Action.hiddle;
 
+        aroundCells.clear();
 
-        ArrayList<FutureCellDecision> aroundCells = new ArrayList<>();
         ArrayList<FutureCellDecision> safeCells = new ArrayList<>();
         ArrayList<FutureCellDecision> unknownCells = new ArrayList<>();
         ArrayList<FutureCellDecision> blockedCells = new ArrayList<>();
@@ -111,6 +111,14 @@ public class Agent {
 
     public Cell[][] getPlayerMap() {
         return knowncells;
+    }
+
+    public ArrayList<FutureCellDecision> getAroundCells() {
+        return aroundCells;
+    }
+
+    public void setAroundCells(ArrayList<FutureCellDecision> aroundCells) {
+        this.aroundCells = aroundCells;
     }
 
     public void discoverPosition(Cell[] cells,boolean advanced,boolean dead,Action action){
