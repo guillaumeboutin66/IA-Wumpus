@@ -85,8 +85,10 @@ public class Agent {
             action = randomAction(safeCells);
         }else if(unknownCells.size()>0){
             action = randomAction(unknownCells);
-        }else {
+        }else if(knownSafeCells.size()>0){
             action = randomAction(knownSafeCells);
+        }else{
+            action = randomAction(blockedCells);
         }
 
         System.out.println(action);
@@ -168,10 +170,18 @@ public class Agent {
 
     public Cell[] getNeighbors(Cell cell){
         Cell[] neighbors = new Cell[4];
-        neighbors[0]=knowncells[cell.getPosition().x][cell.getPosition().y - 1];//up
-        neighbors[1]=knowncells[cell.getPosition().x+1][cell.getPosition().y];//right
-        neighbors[2]=knowncells[cell.getPosition().x][cell.getPosition().y + 1];//bottom
-        neighbors[3]=knowncells[cell.getPosition().x-1][cell.getPosition().y];//left
+        if(cell.getPosition().y-1>0) {
+            neighbors[0] = knowncells[cell.getPosition().x][cell.getPosition().y - 1];//up
+        }
+        if(cell.getPosition().x+1<knowncells[0].length) {
+            neighbors[1] = knowncells[cell.getPosition().x + 1][cell.getPosition().y];//right
+        }
+        if(cell.getPosition().y + 1<knowncells.length) {
+            neighbors[2] = knowncells[cell.getPosition().x][cell.getPosition().y + 1];//bottom
+        }
+        if(cell.getPosition().x-1>0) {
+            neighbors[3] = knowncells[cell.getPosition().x - 1][cell.getPosition().y];//left
+        }
         return neighbors;
     }
 }

@@ -52,7 +52,11 @@ public class FutureCellDecision {
         this.position=position;
         this.neighbors = neighbors;
         this.action = action;
-        line = new Line(neighbors[0].getPrincipalEvent(),neighbors[1].getPrincipalEvent(),neighbors[2].getPrincipalEvent(),neighbors[3].getPrincipalEvent(),true);
+        decisiontree.Cell[] events = new decisiontree.Cell[4];
+        for(int i = 0; i<4;i++){
+            events[i]= neighbors[i]==null ? decisiontree.Cell.Unreachable : neighbors[i].getPrincipalEvent();
+        }
+        line = new Line(events[0],events[1],events[2],events[3],true);
     }
 
 
