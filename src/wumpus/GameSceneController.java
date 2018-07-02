@@ -67,6 +67,14 @@ public class GameSceneController {
     RadioButton manuel;
     @FXML
     Label win;
+    @FXML
+    Label up;
+    @FXML
+    Label right;
+    @FXML
+    Label left;
+    @FXML
+    Label down;
 
     public GameSceneController(){
     }
@@ -109,6 +117,7 @@ public class GameSceneController {
                         Action action = Action.hiddle;
                         if(auto.isSelected()) {
                             action = agent.takeDecision();
+                            updateLabel(agent.getAroundCells());
                             Thread.sleep(100);
                         }else if(manuel.isSelected()){
                             action = manualAction;
@@ -207,7 +216,7 @@ public class GameSceneController {
             for (int j = 1; j < mapCells[i].length-1; j++) {
                 for (Cell.Event event : mapCells[i][j].getEvents()) {
                     if (event == Cell.Event.gold) {
-                        result2 = AlgoA.getSolution(x+1, y+1, agent.position.x, agent.position.y, i, j, gameManager.getDangerousCells());
+                        result2 = AlgoA.getSolution(x+2, y+2, agent.position.x, agent.position.y, i, j, gameManager.getDangerousCells());
                     }
                 }
             }
@@ -228,6 +237,36 @@ public class GameSceneController {
     public void resetPath(){
         for (Point point : lastBestPath){
             gameManager.getMap()[point.x][point.y].setBorder(null);
+        }
+    }
+
+    public void updateLabel(ArrayList<FutureCellDecision> futureCellDecisions){
+        for(FutureCellDecision decisions : futureCellDecisions ){
+            if(decisions.getAction()==Action.up){
+                if(decisions.getScore().toString()!=null) {
+                    up.setText(decisions.getScore().toString());
+                }else{
+                    up.setText("Vu");
+                }
+            }else if(decisions.getAction()==Action.right){
+                if(decisions.getScore().toString()!=null) {
+                    right.setText(decisions.getScore().toString());
+                }else{
+                    right.setText("Vu");
+                }
+            }if(decisions.getAction()==Action.left){
+                if(decisions.getScore().toString()!=null) {
+                    left.setText(decisions.getScore().toString());
+                }else{
+                    left.setText("Vu");
+                }
+            }if(decisions.getAction()==Action.bottom){
+                if(decisions.getScore().toString()!=null) {
+                    down.setText(decisions.getScore().toString());
+                }else{
+                    down.setText("Vu");
+                }
+            }
         }
     }
 

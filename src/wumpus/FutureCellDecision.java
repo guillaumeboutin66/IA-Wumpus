@@ -54,7 +54,7 @@ public class FutureCellDecision {
         this.action = action;
         decisiontree.Cell[] events = new decisiontree.Cell[4];
         for(int i = 0; i<4;i++){
-            events[i]= neighbors[i]==null ? decisiontree.Cell.Unreachable : neighbors[i].getPrincipalEvent();
+            events[i]= neighbors[i]==null ? decisiontree.Cell.Unreachable : neighbors[i].getPrincipalEvent(neighbors[i]);
         }
         line = new Line(events[0],events[1],events[2],events[3],true);
     }
