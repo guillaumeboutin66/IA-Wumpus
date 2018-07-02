@@ -4,18 +4,21 @@ import javafx.animation.AnimationTimer;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import java.awt.*;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameSceneController {
 
@@ -23,11 +26,22 @@ public class GameSceneController {
     int y;
     int width;
     int height;
+    int nbParties;
     double squareSizeX;
     double sqaureSizeY;
     double pitRate;
     GameManager gameManager;
     Agent agent;
+    ArrayList<Point> lastBestPath = new ArrayList<>();
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
     private Scene scene;
     private Stage window;
     Boolean pause = false;
@@ -56,14 +70,15 @@ public class GameSceneController {
     }
 
     // doesn't need to be called "start" any more...
-    public void startGame(Stage window,int x,int y,double pitRate,Scene settingsScene) throws Exception {
+    public void startGame(Stage window,int x,int y,double pitRate,Scene settingsScene, int nbp) throws Exception {
         FXMLLoader gamePaneLoader = new FXMLLoader(getClass().getResource("resources/FXML/game.fxml"));
         this.settingsScene = settingsScene;
         gamePaneLoader.setController(this);
         Parent gamePane = gamePaneLoader.load();
-        Scene scene =  new Scene(gamePane, 1300 ,900);
+        scene =  new Scene(gamePane, 1300 ,900);
         window.setScene(scene);
         this.window=window;
+        this.nbParties = nbp;
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()){
                 case Q:
@@ -84,6 +99,7 @@ public class GameSceneController {
         initItems(x,y,pitRate);
         initMap();
         initPlayerMap();
+        //initDecisionTree();
         new AnimationTimer(){
             @Override
             public void handle(long currentNanoTime){
@@ -109,14 +125,18 @@ public class GameSceneController {
                                     win.setVisible(true);
                                 }
                             }
-                            agent.discoverPosition(newNeighbors);
+                            agent.discoverPosition(newNeighbors,gameManager.getPlayerHasAdvanced(),gameManager.agentIsDead(),action);
                             manualAction = Action.hiddle;
                         }
                     } catch (Exception e) {
                         //do something
                     }
                 }else{
+                    try {
                         gameOver();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }.start();
@@ -152,29 +172,66 @@ public class GameSceneController {
         }
     }
 
-    public void gameOver(){
+    public void gameOver() throws Exception{
         gameover.setVisible(true);
         savebutton.setVisible(true);
-    }
-
-    public void userinput(){
-
+        if(nbParties>0){
+            GameSceneController newGame = new GameSceneController();
+            newGame.startGame(window,x,y,pitRate,settingsScene,nbParties-1);
+            nbParties=0;
+        }
     }
 
     public void saveState() throws IOException{
-        String str = gameManager.getPlayerPath().get(gameManager.getPlayerPath().size()-2).toString();
-        String finaleAction = finalAction.toString();
         BufferedWriter writer = new BufferedWriter(new FileWriter("D:/Documents/Cours/I4/ProjetIAGauthierAdrien/src/wumpus/training/train.txt", true));
-        writer.append(System.lineSeparator());
-        writer.append(str);
-        writer.append(" ");
-        writer.append(finaleAction);
 
+        PlayerData player = PlayerData.getInstance();
+        for(String s : player.getPlayerData()) {
+            writer.append(System.lineSeparator());
+            writer.append(s);
+        }
         writer.close();
     }
 
     public void returnToSettings(Event event){
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(settingsScene);
+        window.setScene(settingsScene);
     }
+
+    private ArrayList<Point> searchShortPath(Cell[][] map){
+        Cell[][] mapCells = map;
+        ArrayList<Point> result2 = new ArrayList<>();
+        for(int i = 1; i < mapCells.length-1; i++) {
+            for (int j = 1; j < mapCells[i].length-1; j++) {
+                for (Cell.Event event : mapCells[i][j].getEvents()) {
+                    if (event == Cell.Event.gold) {
+                        result2 = AlgoA.getSolution(x+1, y+1, agent.position.x, agent.position.y, i, j, gameManager.getDangerousCells());
+                    }
+                }
+            }
+        }
+        return result2;
+    }
+
+    public void showBestChemin(){
+        ArrayList<Point> solution = searchShortPath(gameManager.getMap());
+        lastBestPath = solution;
+        for (Point point : solution){
+            System.out.println(point.getLocation());
+            gameManager.getMap()[point.x][point.y].setBorder(new Border(new BorderStroke(Color.GREEN,
+                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2, 2, 2, 2, false, false, false, false))));
+        }
+    }
+
+    public void resetPath(){
+        for (Point point : lastBestPath){
+            gameManager.getMap()[point.x][point.y].setBorder(null);
+        }
+    }
+
+    /*
+    public void initDecisionTree(){
+        agent.setDecisionTree();
+
+    }
+     */
 }

@@ -22,6 +22,16 @@ public class GameManager {
     int mapHeight;
     int usableHeight;
     int usableWidth;
+
+    public Boolean getPlayerHasAdvanced() {
+        return playerHasAdvanced;
+    }
+
+    public void setPlayerHasAdvanced(Boolean playerHasAdvanced) {
+        this.playerHasAdvanced = playerHasAdvanced;
+    }
+
+    Boolean playerHasAdvanced=false;
     String orientation = "down";
     ArrayList<Cell> playerPath = new ArrayList<>();
     
@@ -76,19 +86,21 @@ public class GameManager {
         cells[2] = map[agentPosition.x + 1][agentPosition.y];//right
         cells[3] = map[agentPosition.x][agentPosition.y + 1];//bottom
         cells[4] = map[agentPosition.x - 1][agentPosition.y];//left
-        
+
         return cells;
     }
 
     public void upadtePlayer(Cell previousCell,Cell currentCell,String s){
 
         if(previousCell!=currentCell) {
+            playerHasAdvanced = true;
             currentCell.addEvent(Cell.Event.agent);
             previousCell.removeEvent(Cell.Event.agent);
             currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player_" + s + ".png\");-fx-background-size: " + currentCell.sizeX + " " + currentCell.sizeY +";");
             previousCell.setOriginalStyle();
             addToPath(currentCell);
         }else{
+            playerHasAdvanced = false;
             currentCell.setStyle("-fx-background-image:url(\"wumpus/resources/player_" + s + ".png\");-fx-background-size: " + currentCell.sizeX + " " + currentCell.sizeY +";");
         }
     }
@@ -242,4 +254,15 @@ public class GameManager {
         return playerPath;
     }
 
+        public ArrayList<Point> getDangerousCells(){
+        ArrayList<Point> dangerousCells = new ArrayList<>();
+        for(int i = 0; i<mapWidth;i++){
+            for(int j = 0; j<mapHeight;j++){
+                if(map[i][j].isDangerous()||map[i][j].getEvents().contains(Cell.Event.wall)){
+                    dangerousCells.add(map[i][j].getPosition());
+                }
+            }
+        }
+        return dangerousCells;
+    }
 }

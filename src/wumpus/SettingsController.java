@@ -17,6 +17,8 @@ public class SettingsController {
     @FXML
     private Slider puits;
     @FXML
+    private TextField nbp;
+    @FXML
     private Label wellrate;
 
     private Scene firstscene;
@@ -37,9 +39,9 @@ public class SettingsController {
 
     public void launchGame(Event event)throws Exception{
         try {
-            gamescene = new GameSceneController();
-            Stage scene = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            gamescene.startGame(scene,Integer.parseInt(largeur.getText()),Integer.parseInt(hauteur.getText()),puits.getValue(),wellrate.getScene());
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                gamescene = new GameSceneController();
+                gamescene.startGame(stage, Integer.parseInt(largeur.getText()), Integer.parseInt(hauteur.getText()), puits.getValue(), wellrate.getScene(), Integer.parseInt(nbp.getText()) - 1);
         }catch (java.lang.Exception e){
             System.out.println(e.getMessage());
             throw e;

@@ -36,6 +36,16 @@ public class Cell extends StackPane{
     private Rectangle border;
     private Text text = new Text();
 
+    public Boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        isBlocked = blocked;
+    }
+
+    private Boolean isBlocked=false;
+
     public boolean isCollision() {
         return collision;
     }
