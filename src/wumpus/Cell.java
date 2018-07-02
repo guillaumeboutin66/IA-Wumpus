@@ -103,8 +103,28 @@ public class Cell extends StackPane{
     public Rectangle getBorderRectangle(){
         return this.border;
     }
+
     public ArrayList<Event> getEvents(){
         return events;
+    }
+
+    public decisiontree.Cell getPrincipalEvent(){
+
+        decisiontree.Cell event;
+
+        if(this.getEvents().size()==0){
+            event = decisiontree.Cell.Empty;
+        }else if(this.getEvents().contains(Event.wind)){
+            event = decisiontree.Cell.Wind;
+        }else if(this.getEvents().contains(Event.smell)){
+            event = decisiontree.Cell.Smell;
+        }else if(this.getEvents().contains(Event.agent)){
+            event = decisiontree.Cell.Player;
+        }else{
+            event = decisiontree.Cell.Unknown;
+        }
+
+        return event;
     }
 
     public void removeEvent(Event e){

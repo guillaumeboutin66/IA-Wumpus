@@ -5,6 +5,8 @@
  */
 package wumpus;
 
+import decisiontree.ID3;
+import decisiontree.Line;
 import javafx.scene.Parent;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
@@ -21,7 +23,16 @@ public class Agent {
     Point position;
     Cell[][] knowncells;
     ArrayList<Cell> path = new ArrayList<>();
-    //Decision tree
+
+    public ID3 getDecision() {
+        return decision;
+    }
+
+    public void setDecision(ID3 decision) {
+        this.decision = decision;
+    }
+
+    ID3 decision;
 
 
     public Agent(Cell startingCell,int width, int height, double sizeX, double sizeY){
@@ -35,34 +46,62 @@ public class Agent {
     
     public Action takeDecision(){
 
-        ArrayList<Cell> aroundCells = new ArrayList<>();
-        HashMap<Cell,Float> unknowCells = new HashMap<>();
-        ArrayList<Cell> validCells = new ArrayList<>();
-        ArrayList<Cell> idealCells = new ArrayList<>();
-        aroundCells.add(knowncells[position.x][position.y - 1]);//up
-        aroundCells.add(knowncells[position.x + 1][position.y]);//right
-        aroundCells.add(knowncells[position.x][position.y + 1]);//bottom
-        aroundCells.add(knowncells[position.x - 1][position.y]);//left
+        Action action = Action.hiddle;
 
-        for(Cell cell : aroundCells){
-            if(cell.getEvents().contains(Cell.Event.unkonwn)){
-                unknowCells.put(cell,0f);
-            }else if(!cell.isCollision()||!cell.isBlocked()){
-                validCells.add(cell);
+        ArrayList<FutureCellDecision> aroundCells = new ArrayList<>();
+        ArrayList<FutureCellDecision> safeCells = new ArrayList<>();
+        ArrayList<FutureCellDecision> unknownCells = new ArrayList<>();
+        ArrayList<FutureCellDecision> blockedCells = new ArrayList<>();
+        ArrayList<FutureCellDecision> knownSafeCells = new ArrayList<>();
+
+        //cell adjacentes à mes cells adjcentes
+        aroundCells.add(new FutureCellDecision(new Point(position.x,position.y - 1),getNeighbors(knowncells[position.x][position.y - 1]),Action.up));//up
+        aroundCells.add(new FutureCellDecision(new Point(position.x + 1,position.y),getNeighbors(knowncells[position.x + 1][position.y]),Action.right));//right
+        aroundCells.add(new FutureCellDecision(new Point(position.x,position.y+1),getNeighbors(knowncells[position.x][position.y + 1]),Action.bottom));//bottom
+        aroundCells.add(new FutureCellDecision(new Point(position.x - 1,position.y),getNeighbors(knowncells[position.x - 1][position.y]),Action.left));//left
+
+        for(FutureCellDecision futureCell : aroundCells){
+
+            Cell knownAgentCell = knowncells[futureCell.getPosition().x][futureCell.getPosition().y];
+
+            if(knownAgentCell.getEvents().contains(Cell.Event.unkonwn)){
+
+                futureCell.setScore(decision.testDecisionAgainstTree(futureCell.getLine()));
+
+                if(futureCell.getScore()==1){
+                    safeCells.add(futureCell);
+                }else if(futureCell.getScore()==0){
+                    blockedCells.add(futureCell);
+                }else{
+                    unknownCells.add(futureCell);
+                }
+            }else if(!knownAgentCell.isCollision()||!knownAgentCell.isBlocked()){
+                knownSafeCells.add(futureCell);
             }
+
         }
 
-        Iterator it = unknowCells.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Cell,Float> pair = (Map.Entry)it.next();
-             //fait le calcul pour la case
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        if(!idealCells.isEmpty()){
-            // rand sur les cells avec un score de 1
+        if(safeCells.size()>0){
+            action = randomAction(safeCells);
+        }else if(unknownCells.size()>0){
+            action = randomAction(unknownCells);
+        }else {
+            action = randomAction(knownSafeCells);
         }
 
-        return Action.right;
+        System.out.println(action);
+
+        return action;
+    }
+
+    public Action randomAction(ArrayList<FutureCellDecision> futureCells){
+        Action action;
+        Random r = new Random();
+        int low = 0;
+        int high = futureCells.size();
+        int Result = r.nextInt(high-low) + low;
+        action = futureCells.get(Result).getAction();
+        return action;
     }
 
     public Cell[][] getPlayerMap() {
@@ -125,5 +164,14 @@ public class Agent {
                 }
             }
         }
+    }
+
+    public Cell[] getNeighbors(Cell cell){
+        Cell[] neighbors = new Cell[4];
+        neighbors[0]=knowncells[cell.getPosition().x][cell.getPosition().y - 1];//up
+        neighbors[1]=knowncells[cell.getPosition().x+1][cell.getPosition().y];//right
+        neighbors[2]=knowncells[cell.getPosition().x][cell.getPosition().y + 1];//bottom
+        neighbors[3]=knowncells[cell.getPosition().x-1][cell.getPosition().y];//left
+        return neighbors;
     }
 }
