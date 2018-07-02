@@ -101,7 +101,6 @@ public class GameSceneController {
         initItems(x,y,pitRate);
         initMap();
         initPlayerMap();
-        initDecisionTree();
         new AnimationTimer(){
             @Override
             public void handle(long currentNanoTime){
@@ -110,7 +109,7 @@ public class GameSceneController {
                         Action action = Action.hiddle;
                         if(auto.isSelected()) {
                             action = agent.takeDecision();
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         }else if(manuel.isSelected()){
                             action = manualAction;
                         }
@@ -121,11 +120,13 @@ public class GameSceneController {
                             if (gameManager.agentIsDead()) {
                                 end = true;//agent is dead
                                 finalAction = action;
+                                agent.saveFact(true);
                             }else{
                                 if (gameManager.getMap()[agent.position.x][agent.position.y].getEvents().contains(Cell.Event.gold)) {
                                     end = true;
                                     win.setVisible(true);
                                 }
+                                agent.saveFact(false);
                             }
                             agent.discoverPosition(newNeighbors,gameManager.getPlayerHasAdvanced(),gameManager.agentIsDead(),action);
                             manualAction = Action.hiddle;
@@ -230,18 +231,4 @@ public class GameSceneController {
         }
     }
 
-    public void initDecisionTree(){
-        Line[] totalFact = new Line[9];
-        totalFact[0] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Smell, false);
-        totalFact[1] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, decisiontree.Cell.Empty, false);
-        totalFact[2] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
-        totalFact[3] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Empty, true);
-        totalFact[4] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Smell, decisiontree.Cell.Player, true);
-        totalFact[5] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Wind, true);
-        totalFact[6] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
-        totalFact[7] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Player, false);
-        totalFact[8] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Empty, true);
-        agent.setDecision(new ID3(totalFact));
-
-    }
 }

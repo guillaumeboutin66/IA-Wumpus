@@ -23,21 +23,14 @@ public class Agent {
     Point position;
     Cell[][] knowncells;
     ArrayList<Cell> path = new ArrayList<>();
-
-    public ID3 getDecision() {
-        return decision;
-    }
-
-    public void setDecision(ID3 decision) {
-        this.decision = decision;
-    }
-
     ID3 decision;
+    FutureCellDecision lastDecision;
 
 
     public Agent(Cell startingCell,int width, int height, double sizeX, double sizeY){
         int mapWidth = width+2;
         int mapHeight = height+2;
+        initDecisionTree();
         position = new Point(startingCell.getPosition().x,startingCell.getPosition().y);
         knowncells = new Cell[mapWidth][mapHeight];
         knowncells[position.x][position.y] = new Cell(startingCell);
@@ -47,6 +40,7 @@ public class Agent {
     public Action takeDecision(){
 
         Action action = Action.hiddle;
+
 
         ArrayList<FutureCellDecision> aroundCells = new ArrayList<>();
         ArrayList<FutureCellDecision> safeCells = new ArrayList<>();
@@ -59,6 +53,10 @@ public class Agent {
         aroundCells.add(new FutureCellDecision(new Point(position.x + 1,position.y),getNeighbors(knowncells[position.x + 1][position.y]),Action.right));//right
         aroundCells.add(new FutureCellDecision(new Point(position.x,position.y+1),getNeighbors(knowncells[position.x][position.y + 1]),Action.bottom));//bottom
         aroundCells.add(new FutureCellDecision(new Point(position.x - 1,position.y),getNeighbors(knowncells[position.x - 1][position.y]),Action.left));//left
+
+        if(decision == null){
+            return randomAction(aroundCells);
+        }
 
         for(FutureCellDecision futureCell : aroundCells){
 
@@ -103,6 +101,7 @@ public class Agent {
         int high = futureCells.size();
         int Result = r.nextInt(high-low) + low;
         action = futureCells.get(Result).getAction();
+        lastDecision = futureCells.get(Result);
         return action;
     }
 
@@ -183,5 +182,32 @@ public class Agent {
             neighbors[3] = knowncells[cell.getPosition().x - 1][cell.getPosition().y];//left
         }
         return neighbors;
+    }
+
+    public void saveFact(boolean death){
+
+        lastDecision.getLine().death = death;
+        PlayerData.getInstance().addFact(lastDecision.getLine());
+
+        decision = new ID3(PlayerData.getInstance().getFacts().toArray(new Line[PlayerData.getInstance().getFacts().size()]));
+    }
+
+
+    public void initDecisionTree(){
+        /*Line[] totalFact = new Line[9];
+        totalFact[0] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Smell, false);
+        totalFact[1] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, decisiontree.Cell.Empty, false);
+        totalFact[2] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
+        totalFact[3] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Empty, true);
+        totalFact[4] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Smell, decisiontree.Cell.Player, true);
+        totalFact[5] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Wind, true);
+        totalFact[6] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
+        totalFact[7] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Player, false);
+        totalFact[8] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Empty, true);
+        */
+
+        if(PlayerData.getInstance().getFacts().size() > 0){
+            decision = new ID3(PlayerData.getInstance().getFacts().toArray(new Line[PlayerData.getInstance().getFacts().size()]));
+        }
     }
 }

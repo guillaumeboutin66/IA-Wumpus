@@ -25,7 +25,6 @@ public class ID3 {
         this.totalFacts = totalFacts;
 
         long startTime = System.currentTimeMillis();
-
         CreateTree();
         System.out.println(tree);
         long endTime = System.currentTimeMillis();
@@ -184,8 +183,6 @@ public class ID3 {
         
         return new Pair<Float, Float>(-ratioDeath*log2(ratioDeath) - ratioSurvive*log2(ratioSurvive), probabilityCell);
     }
-    
-
 
 
     /** Reusable */
