@@ -11,8 +11,12 @@ import javafx.scene.Parent;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -111,9 +115,7 @@ public class Agent {
 
     public void discoverPosition(Cell[] cells,boolean advanced,boolean dead,Action action){
         Point newPosition = cells[0].getPosition();
-        if(action!=Action.hiddle) {
-            writeData(cells, advanced, dead,action);
-        }
+
         if(!this.position.equals(newPosition)) {
             knowncells[newPosition.x][newPosition.y].getEvents().clear();
             knowncells[newPosition.x][newPosition.y].getEvents().addAll(cells[0].getEvents());
@@ -136,25 +138,6 @@ public class Agent {
         }
     }
 
-    public String writeData(Cell[] cells, boolean advance, boolean dead,Action action){
-        String data="";
-
-        for(int i =1;i<5;i++){
-            if(data.isEmpty()){
-                data+=knowncells[cells[i].getPosition().x][cells[i].getPosition().y].getEvents().toString();
-            }else{
-                data+=" " + knowncells[cells[i].getPosition().x][cells[i].getPosition().y].getEvents().toString();
-            }
-        }
-
-        data+=" " + action + " " + advance + " " + dead;
-
-        PlayerData player = PlayerData.getInstance();
-        player.saveData(data);
-        System.out.println(data);
-
-        return data;
-    }
     public void fillPlayerMap(int width,int height,double sizeCaseHorizontal, double sizeCaseVertical){
         for(int i = 0; i < width; i++){
             for(int j = 0; j < height; j++) {
@@ -193,21 +176,28 @@ public class Agent {
     }
 
 
-    public void initDecisionTree(){
-        /*Line[] totalFact = new Line[9];
-        totalFact[0] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Smell, false);
-        totalFact[1] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, decisiontree.Cell.Empty, false);
-        totalFact[2] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
-        totalFact[3] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Empty, true);
-        totalFact[4] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Smell, decisiontree.Cell.Player, true);
-        totalFact[5] =  new Line(decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Wind, true);
-        totalFact[6] =  new Line(decisiontree.Cell.Unknown, decisiontree.Cell.Empty, decisiontree.Cell.Player, decisiontree.Cell.Empty, false);
-        totalFact[7] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Unknown, decisiontree.Cell.Player, decisiontree.Cell.Player, false);
-        totalFact[8] =  new Line(decisiontree.Cell.Smell, decisiontree.Cell.Player, decisiontree.Cell.Smell, decisiontree.Cell.Empty, true);
-        */
+    private void initDecisionTree(){
+        retrieveMemory();
 
         if(PlayerData.getInstance().getFacts().size() > 0){
             decision = new ID3(PlayerData.getInstance().getFacts().toArray(new Line[PlayerData.getInstance().getFacts().size()]));
         }
+    }
+
+    private void retrieveMemory(){
+        try (Stream<String> stream = Files.lines(Paths.get(System.getProperty("user.dir") + "\\src\\wumpus\\training\\train.txt"))) {
+
+            stream.forEach(s -> {
+                if(s.length() != 0){
+                    String[] arr =  s.split("\\s+");
+                    Line line = new Line(decisiontree.Cell.values()[0], decisiontree.Cell.values()[1], decisiontree.Cell.values()[2], decisiontree.Cell.values()[3], Boolean.parseBoolean(arr[4]));
+                    PlayerData.getInstance().addFact(line);
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

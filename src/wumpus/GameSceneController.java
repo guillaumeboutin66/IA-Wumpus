@@ -109,7 +109,7 @@ public class GameSceneController {
                         Action action = Action.hiddle;
                         if(auto.isSelected()) {
                             action = agent.takeDecision();
-                            Thread.sleep(100);
+                            Thread.sleep(50);
                         }else if(manuel.isSelected()){
                             action = manualAction;
                         }
@@ -186,10 +186,22 @@ public class GameSceneController {
     }
 
     public void saveState() throws IOException{
-        BufferedWriter writer = new BufferedWriter(new FileWriter("D:/Documents/Cours/I4/ProjetIAGauthierAdrien/src/wumpus/training/train.txt", true));
 
-        PlayerData player = PlayerData.getInstance();
-        for(String s : player.getPlayerData()) {
+        BufferedWriter writer = new BufferedWriter(new FileWriter( System.getProperty("user.dir") + "\\src\\wumpus\\training\\train.txt", false));
+        ArrayList<String> data = new ArrayList<>();
+        ArrayList<Line> facts = PlayerData.getInstance().getFacts();
+        StringBuilder strb = new StringBuilder();
+        for(int i = 0; i < facts.size(); i++){
+            for(int j = 0; j < facts.get(i).surroundings.length; j++){
+                strb.append(facts.get(i).surroundings[j].ordinal() + " ");
+            }
+
+            strb.append(facts.get(i).death.toString());
+            data.add(strb.toString());
+            strb.setLength(0);
+        }
+
+        for(String s : data) {
             writer.append(System.lineSeparator());
             writer.append(s);
         }

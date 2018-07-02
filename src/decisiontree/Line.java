@@ -16,5 +16,4 @@ public class Line {
         surroundings[3] = left;
         this.death = death;
     }
-    
 }
